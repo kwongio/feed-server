@@ -1,7 +1,14 @@
 package com.gio.feedserver.feed;
 
+import com.gio.feedserver.feed.FeedRequest;
+import com.gio.feedserver.feed.SocialFeed;
+import com.gio.feedserver.feed.SocialFeedRepository;
+import com.gio.feedserver.feed.UserInfo;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClient;
 
 import java.util.List;
 
@@ -9,6 +16,10 @@ import java.util.List;
 public class SocialFeedService {
 
     private SocialFeedRepository feedRepository;
+
+    @Value("${sns.user-server}")
+    private String userServerUrl;
+    private RestClient restClient = RestClient.create();
 
     public SocialFeedService(SocialFeedRepository feedRepository) {
         this.feedRepository = feedRepository;
@@ -34,6 +45,16 @@ public class SocialFeedService {
     public SocialFeed createFeed(FeedRequest feed) {
         SocialFeed savedFeed = feedRepository.save(new SocialFeed(feed));
         return savedFeed;
+    }
+
+    public UserInfo getUserInfo(int userId) {
+        return restClient.get()
+                .uri(userServerUrl + "/api/users/" + userId)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, (request, response) -> {
+                    throw new RuntimeException("invalid server response " + response.getStatusText());
+                })
+                .body(UserInfo.class);
     }
 
 }

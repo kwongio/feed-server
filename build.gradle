@@ -45,7 +45,7 @@ jib {
     }
     to {
         image = 'rldh9037/feed-server'
-        tags = ['0.0.2']
+        tags = ['0.0.4']
     }
     container {
         creationTime = 'USE_CURRENT_TIMESTAMP'

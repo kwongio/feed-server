@@ -1,9 +1,7 @@
 package com.gio.feedserver.feed;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Getter
 public class FeedRequest {
